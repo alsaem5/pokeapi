@@ -4,11 +4,34 @@ const container = document.getElementById('pokemon-list-container');
 const searchInput = document.getElementById('search-input');
 const searchButton = document.getElementById('search-button');
 
-// Variable global para almacenar todos los Pokémon cargados (Memoria Cache)
+// Elementos del Modal (DEBEN existir en index.html)
+const pokemonModal = document.getElementById('pokemon-modal');
+const modalDetails = document.getElementById('modal-details');
+const closeButton = document.querySelector('.close-button');
+
 let allPokemon = [];
 
 // ===================================
-// A. Registro del Service Worker
+// A. Configuración del Modal
+// ===================================
+
+// Cierra el modal al hacer clic en la 'x'
+if (closeButton) {
+    closeButton.addEventListener('click', () => {
+        pokemonModal.style.display = 'none';
+    });
+}
+
+// Cierra el modal si el usuario hace clic fuera de la ventana de contenido
+window.addEventListener('click', (event) => {
+    if (event.target === pokemonModal) {
+        pokemonModal.style.display = 'none';
+    }
+});
+
+
+// ===================================
+// B. Registro del Service Worker
 // ===================================
 
 if ('serviceWorker' in navigator) {
@@ -20,7 +43,7 @@ if ('serviceWorker' in navigator) {
 }
 
 // ===================================
-// B. Consumo y Carga Inicial de Datos
+// C. Consumo y Carga Inicial de Datos
 // ===================================
 
 async function fetchPokemon(id) {
@@ -32,7 +55,7 @@ async function fetchPokemon(id) {
         const pokemon = await response.json();
         return pokemon;
     } catch (error) {
-        console.error("Error al obtener Pokémon:", error);
+        // console.error("Error al obtener Pokémon:", error);
         return null;
     }
 }
@@ -40,23 +63,48 @@ async function fetchPokemon(id) {
 async function loadAllPokemon() {
     container.innerHTML = '<p class="loading-message">Cargando los 151 Pokémon. Esto puede tardar unos segundos...</p>';
     
-    // Crea un array de promesas para cargar todos los Pokémon en paralelo
     const pokemonPromises = [];
     for (let i = 1; i <= POKEMON_COUNT; i++) {
         pokemonPromises.push(fetchPokemon(i));
     }
 
-    // Espera a que todas las promesas se resuelvan y filtra nulos
     allPokemon = (await Promise.all(pokemonPromises)).filter(p => p !== null);
     
     displayPokemon(allPokemon);
 }
 
-function createPokemonCardHTML(pokemon) {
-    const primaryType = pokemon.types[0].type.name; 
+function renderModalDetails(pokemon) {
     const paddedId = pokemon.id.toString().padStart(3, '0');
-    
-    // Usamos el Official Artwork (imagen de alta calidad)
+    // Usamos 'official-artwork' para las imágenes de alta calidad
+    const imageUrl = pokemon.sprites.other['official-artwork'].front_default;
+    const typeBadges = pokemon.types.map(t => `<span class="type-badge type-${t.type.name}">${t.type.name.toUpperCase()}</span>`).join('');
+    // Manejo seguro de habilidades, asegurando que no haya errores si faltan
+    const abilitiesList = pokemon.abilities ? pokemon.abilities.map(a => a.ability.name.toUpperCase()).join(', ') : 'Desconocidas';
+
+    modalDetails.innerHTML = `
+        <h2>${pokemon.name.toUpperCase()}</h2>
+        <img src="${imageUrl}" alt="${pokemon.name}">
+        
+        <p><strong>ID Pokédex:</strong> #${paddedId}</p>
+        <p><strong>Altura:</strong> ${pokemon.height / 10} m</p>
+        <p><strong>Peso:</strong> ${pokemon.weight / 10} kg</p>
+        <p><strong>Habilidades:</strong> ${abilitiesList}</p>
+        
+        <div class="pokemon-types">
+            ${typeBadges}
+        </div>
+    `;
+}
+
+function handleCardClick(pokemon) {
+    // 1. Renderiza el contenido dentro del modal
+    renderModalDetails(pokemon);
+    // 2. Muestra el modal
+    pokemonModal.style.display = 'block';
+}
+
+function createPokemonCardHTML(pokemon) {
+    const paddedId = pokemon.id.toString().padStart(3, '0');
     const imageUrl = pokemon.sprites.other['official-artwork'].front_default;
 
     return `
@@ -71,7 +119,7 @@ function createPokemonCardHTML(pokemon) {
 }
 
 function displayPokemon(pokemonList) {
-    container.innerHTML = ''; // Limpia el contenedor
+    container.innerHTML = ''; 
     if (pokemonList.length === 0) {
         container.innerHTML = '<p class="loading-message">No se encontraron Pokémon con ese criterio. Intenta con ID o nombre.</p>';
         return;
@@ -83,19 +131,22 @@ function displayPokemon(pokemonList) {
         
         card.classList.add('pokemon-card', `type-${primaryType}`);
         card.innerHTML = createPokemonCardHTML(pokemon);
+        
+        // Asignación del evento click que abre el modal
+        card.addEventListener('click', () => handleCardClick(pokemon));
+        
         container.appendChild(card);
     });
 }
 
 // ===================================
-// C. Funcionalidad de Búsqueda
+// D. Funcionalidad de Búsqueda
 // ===================================
 
 function handleSearch() {
     const query = searchInput.value.toLowerCase().trim();
     
     if (!query) {
-        // Si la caja de búsqueda está vacía, muestra todos
         displayPokemon(allPokemon);
         return;
     }
@@ -104,15 +155,7 @@ function handleSearch() {
         const name = pokemon.name.toLowerCase();
         const id = pokemon.id.toString();
 
-        // Búsqueda por ID exacto
-        if (id === query) {
-            return true;
-        }
-        // Búsqueda por coincidencia de nombre (parcial)
-        if (name.includes(query)) {
-            return true;
-        }
-        return false;
+        return id === query || name.includes(query);
     });
 
     displayPokemon(filteredPokemon);
@@ -124,8 +167,6 @@ searchInput.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
         handleSearch();
     }
-    // Opcional: Búsqueda instantánea al teclear
-    // handleSearch(); 
 });
 
 // Inicia la carga de datos al cargar la página
