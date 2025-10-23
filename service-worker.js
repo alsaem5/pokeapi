@@ -1,31 +1,28 @@
-const CACHE_NAME = 'pokedex-v2'; // <--- VERSIÓN CLAVE
+const CACHE_NAME = 'pokedex-v3'; // <--- VERSIÓN ACTUALIZADA
 const POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon/';
 
-// Archivos estáticos esenciales para la aplicación
+// 1. Archivos estáticos esenciales para la aplicación (Se guardan siempre)
 const urlsToCache = [
     '/',
     '/index.html',
     '/style.css',
     '/app.js',
-    '/manifest.json',
-    // Asegúrate de tener estos iconos en la carpeta /images
-    '/images/icon-192x192.png',
-    '/images/icon-512x512.png'
+    '/manifest.json'
 ];
 
-// 1. Instalación: Abrir caché y agregar archivos estáticos
+// Instalación: Abrir caché y agregar archivos estáticos
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('SW: Cache de assets estáticos abierta y lista.');
+                console.log('SW: Pre-cache de assets estáticos lista.');
                 return cache.addAll(urlsToCache);
             })
             .catch(error => console.error('SW: Error al precachear:', error))
     );
 });
 
-// 2. Activación: Limpiar cachés viejas
+// Activación: Limpiar cachés viejas
 self.addEventListener('activate', event => {
     const cacheWhitelist = [CACHE_NAME];
     event.waitUntil(
@@ -40,16 +37,18 @@ self.addEventListener('activate', event => {
             );
         })
     );
+    // IMPORTANTE: Tomar control inmediato de la página
+    event.waitUntil(self.clients.claim());
 });
 
-// 3. Estrategia de Fetch: Network-First para datos de API y Cache-First para assets
+// Estrategia de Fetch: Manejo de solicitudes
 self.addEventListener('fetch', event => {
-    // Si es una petición a la PokeAPI, intenta primero la red (Network-First)
-    if (event.request.url.includes(POKEAPI_URL)) {
+    // A) Si es una petición a la PokeAPI (Datos de Pokémon):
+    if (event.request.url.includes(POKEAPI_URL) || event.request.url.includes('pokeres.bastionbot.org')) {
+         // Estrategia: Network-First con Fallback a Cache
          event.respondWith(
             fetch(event.request).then(response => {
-                // Si la red es exitosa, guarda la respuesta en caché para uso futuro
-                // Esto permite la funcionalidad offline una vez cargada la página
+                // Guarda la respuesta exitosa en caché y luego la devuelve
                 return caches.open(CACHE_NAME).then(cache => {
                     cache.put(event.request, response.clone());
                     return response;
@@ -62,14 +61,15 @@ self.addEventListener('fetch', event => {
         return;
     }
     
-    // Para todos los demás assets (HTML, CSS, JS, etc.), usa Cache-First
+    // B) Para todos los demás assets (HTML, CSS, JS, imágenes locales):
+    // Estrategia: Cache-First
     event.respondWith(
         caches.match(event.request)
             .then(response => {
                 if (response) {
-                    return response; // Devuelve desde caché
+                    return response; // Devuelve desde caché si existe
                 }
-                return fetch(event.request); // Si no está en caché, ve a la red
+                return fetch(event.request); // Si no, va a la red
             }
         )
     );

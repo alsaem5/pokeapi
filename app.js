@@ -31,11 +31,12 @@ window.addEventListener('click', (event) => {
 
 
 // ===================================
-// B. Registro del Service Worker
+// B. Registro del Service Worker (Debe ser la primera función llamada)
 // ===================================
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+        // La ruta DEBE ser solo '/service-worker.js' si está en la raíz.
         navigator.serviceWorker.register('/service-worker.js')
             .then(registration => console.log('SW registrado con éxito:', registration.scope))
             .catch(error => console.error('Fallo en el registro de SW:', error));
