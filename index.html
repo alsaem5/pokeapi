@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex PWA Profesional</title>
+
+    <meta name="theme-color" content="#CC0000"> 
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <h1>Pokédex PWA</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Buscar Pokémon por nombre o ID...">
+            <button id="search-button">🔍</button>
+        </div>
+    </header>
+
+    <main class="pokemon-list-container" id="pokemon-list-container">
+        <p class="loading-message">Iniciando Pokédex...</p>
+    </main>
+    
+    <script src="app.js"></script>
+</body>
+</html>

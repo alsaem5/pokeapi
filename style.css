@@ -1,0 +1,237 @@
+/* ------------------------------------- */
+/* 1. Variables y Reset Global (Neumorfismo Base) */
+/* ------------------------------------- */
+:root {
+    --color-primary: #CC0000; /* Rojo Pokébola */
+    --color-secondary: #2C2C2C; /* Negro Profundo para texto */
+    --color-background: #E8E8E8; /* Fondo suave (base del neumorfismo) */
+    --color-white: #FFFFFF;
+    --color-light-shadow: #FFFFFF; 
+    --color-dark-shadow: #B5B5B5; 
+    --transition-speed: 0.3s ease-in-out;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-secondary);
+    min-height: 100vh;
+}
+
+/* ------------------------------------- */
+/* 2. Header (Efecto Elevado) */
+/* ------------------------------------- */
+header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 18px 25px; 
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    position: sticky; 
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    font-size: 2em;
+    font-weight: 800; 
+    letter-spacing: 2px;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.search-container {
+    display: flex;
+    width: 100%;
+    max-width: 480px; 
+    margin: 0 auto;
+}
+
+#search-input {
+    flex-grow: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px 0 0 25px;
+    font-size: 1em;
+    box-shadow: inset 3px 3px 5px var(--color-dark-shadow), inset -3px -3px 5px var(--color-light-shadow);
+    background-color: #F8F8F8;
+}
+
+#search-button {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 0 25px 25px 0;
+    cursor: pointer;
+    transition: var(--transition-speed);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#search-button:active {
+    transform: scale(0.95);
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------- */
+/* 3. Lista de Pokémon (Grid) */
+/* ------------------------------------- */
+.pokemon-list-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+    gap: 25px; 
+    padding: 30px;
+}
+
+.loading-message {
+    grid-column: 1 / -1; 
+    text-align: center;
+    padding: 50px;
+    font-size: 1.2em;
+    color: #666;
+}
+
+/* ------------------------------------- */
+/* 4. Tarjeta de Pokémon (Neumórfico con Imagen de Alta Calidad) */
+/* ------------------------------------- */
+.pokemon-card {
+    background-color: var(--color-background); 
+    border-radius: 18px; 
+    padding: 15px;
+    text-align: center;
+    position: relative; 
+    overflow: hidden; 
+    
+    /* Neumorfismo sutil */
+    box-shadow: 6px 6px 12px var(--color-dark-shadow), 
+                -6px -6px 12px var(--color-light-shadow);
+    
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    cursor: pointer;
+}
+
+.pokemon-card:hover {
+    transform: translateY(-8px); 
+    box-shadow: 8px 8px 18px var(--color-dark-shadow), 
+                -8px -8px 18px var(--color-light-shadow),
+                0 0 10px rgba(var(--color-primary), 0.5); 
+}
+
+/* NÚMERO GIGANTE DE FONDO (AJUSTADO) */
+.pokemon-id-background {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    
+    /* TAMAÑO AJUSTADO para que quepa en la tarjeta */
+    font-size: 7em; 
+    transform: translate(-50%, -50%) scale(1.1); 
+    
+    font-weight: 900;
+    color: var(--color-dark-shadow); 
+    opacity: 0.1; 
+    user-select: none; 
+    z-index: 10; 
+    pointer-events: none; 
+    font-family: monospace, sans-serif;
+    line-height: 1; 
+}
+
+.pokemon-card img {
+    width: 120px; 
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    position: relative; 
+    z-index: 20; 
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15)); 
+}
+
+.pokemon-id, .pokemon-name, .pokemon-types {
+    position: relative; 
+    z-index: 30; 
+}
+
+.pokemon-id {
+    font-size: 1em;
+    color: #888;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.pokemon-name {
+    font-size: 1.3em;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    color: var(--color-secondary);
+    text-transform: capitalize;
+    font-weight: 700;
+}
+
+/* ------------------------------------- */
+/* 5. Insignias de Tipos (Pastilla) */
+/* ------------------------------------- */
+.pokemon-types {
+    display: flex;
+    justify-content: center;
+    gap: 8px; 
+}
+
+.type-badge {
+    padding: 5px 12px;
+    border-radius: 15px; 
+    font-size: 0.75em;
+    color: var(--color-white);
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2); 
+    transition: background-color var(--transition-speed);
+}
+
+/* Paleta de Colores de Tipos */
+.type-bug    { background-color: #9EC027; }
+.type-dark   { background-color: #6C5547; }
+.type-dragon { background-color: #6F35FC; }
+.type-electric { background-color: #F7D02C; color: #333; }
+.type-fairy  { background-color: #EE99AC; color: #333; }
+.type-fighting { background-color: #C22E28; }
+.type-fire   { background-color: #EE8130; }
+.type-flying { background-color: #A990F0; }
+.type-ghost  { background-color: #735797; }
+.type-grass  { background-color: #7AC74C; }
+.type-ground { background-color: #E2C565; color: #333; }
+.type-ice    { background-color: #96D9D6; color: #333; }
+.type-normal { background-color: #A8A878; }
+.type-poison { background-color: #A33EA1; }
+.type-psychic { background-color: #F95587; }
+.type-rock   { background-color: #B8A038; }
+.type-steel  { background-color: #B7B9D0; }
+.type-water  { background-color: #6390F0; }
+
+/* ------------------------------------- */
+/* 6. Diseño Responsivo */
+/* ------------------------------------- */
+@media (max-width: 600px) {
+    .pokemon-list-container {
+        padding: 15px;
+        gap: 15px;
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    
+    header h1 {
+        font-size: 1.5em;
+    }
+    
+    /* Ajuste en móvil del número de fondo */
+    .pokemon-id-background {
+        font-size: 5.5em; 
+    }
+}

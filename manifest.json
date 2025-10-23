@@ -1,0 +1,22 @@
+{
+  "name": "Pokédex Profesional PWA",
+  "short_name": "Pokédex Pro",
+  "description": "Una Progressive Web App (PWA) de Pokédex con diseño profesional.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E8E8E8",
+  "theme_color": "#CC0000",
+  "icons": [
+    {
+      "src": "/images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
