@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokedex-v2'; // Versión actualizada del cache
+const CACHE_NAME = 'pokedex-v2'; // <--- VERSIÓN CLAVE
 const POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 // Archivos estáticos esenciales para la aplicación
@@ -8,6 +8,7 @@ const urlsToCache = [
     '/style.css',
     '/app.js',
     '/manifest.json',
+    // Asegúrate de tener estos iconos en la carpeta /images
     '/images/icon-192x192.png',
     '/images/icon-512x512.png'
 ];
@@ -48,6 +49,7 @@ self.addEventListener('fetch', event => {
          event.respondWith(
             fetch(event.request).then(response => {
                 // Si la red es exitosa, guarda la respuesta en caché para uso futuro
+                // Esto permite la funcionalidad offline una vez cargada la página
                 return caches.open(CACHE_NAME).then(cache => {
                     cache.put(event.request, response.clone());
                     return response;
