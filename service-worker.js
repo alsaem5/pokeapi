@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokedex-v4'; // <--- VERSIÓN ACTUALIZADA
+const CACHE_NAME = 'pokedex-v5'; // <--- VERSIÓN ACTUALIZADA
 const POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 // 1. Archivos estáticos esenciales para la aplicación (Se guardan siempre)
