@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokedex-v3'; // <--- VERSIÓN ACTUALIZADA
+const CACHE_NAME = 'pokedex-v4'; // <--- VERSIÓN ACTUALIZADA
 const POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon/';
 
 // 1. Archivos estáticos esenciales para la aplicación (Se guardan siempre)
@@ -7,7 +7,9 @@ const urlsToCache = [
     '/index.html',
     '/style.css',
     '/app.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/images/pokebola1.png',
+    '/images/pokebola2.png'
 ];
 
 // Instalación: Abrir caché y agregar archivos estáticos
